@@ -1,0 +1,43 @@
+[package]
+authors = ["Michael Lodder <redmike7@gmail.com>"]
+categories = ["cryptography", "no-std"]
+description = "A rust implementation of the elliptic curve four Q"
+documentation = "https://docs.rs/curv4q"
+edition = "2021"
+exclude = ["tests/**", "benches/**", "examples/**", ".github/**"]
+homepage = "https://crates.io/crates/curv4q"
+keywords = ["ecc", "fourq"]
+license = "Apache-2.0 OR MIT"
+name = "curv4q"
+readme = "README.md"
+repository = "https://github.com/mikelodder7/curv4q"
+version = "0.1.0"
+
+[features]
+default = []
+digest = ["signature/digest"]
+serde = ["serdect"]
+
+[dependencies]
+serdect = { version = "0.3.0-rc.0", default-features = false, optional = true }
+signature = { version = "2.2", default-features = false }
+subtle = { version = "2.6", default-features = false }
+thiserror = "2.0"
+zeroize = "1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.95"
+
+[dev-dependencies]
+hex = "0.4"
+rand_core = "0.6.4"
+rand_chacha = "0.3.1"
+x25519-dalek = "2.0.1"
+
+[build-dependencies]
+bindgen = { version = "0.70", default-features = false, features = ["runtime"] }
+cc = "1.1"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
