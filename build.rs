@@ -30,18 +30,18 @@ fn main() {
             let use_generic = env::var("GENERIC").map(|v| v == "TRUE").unwrap_or(false);
             let use_asm = env::var("ASM").map(|v| v == "TRUE").unwrap_or(!use_generic);
             let use_avx = env::var("AVX").map(|v| v == "TRUE").unwrap_or(!use_generic);
-            let use_avx2 = env::var("AVX2")
-                .map(|v| v == "TRUE")
-                .unwrap_or(!use_generic);
+            let use_avx2 = env::var("AVX2").map(|v| v == "TRUE").unwrap_or(!use_generic);
 
             if use_asm {
                 build.define("_ASM_", None);
             }
             if use_avx {
-                build.define("_AVX_", None).flag("-mavx");
+                build.define("_AVX_", None)
+                    .flag("-mavx");
             }
             if use_avx2 {
-                build.define("_AVX2_", None).flag("-mavx2");
+                build.define("_AVX2_", None)
+                    .flag("-mavx2");
             }
             if use_generic {
                 build.define("_GENERIC_", None);
@@ -94,8 +94,9 @@ fn main() {
     // Link with lib
     println!("cargo:rustc-link-lib=fourq");
     // Common defines
+    build.define("__LINUX__", None);
     if target_os == "linux" {
-        build.define("__LINUX__", None);
+
         clang_args.push("-D__LINUX__");
         clang_args.push(clang_arg_arch);
     }
@@ -109,11 +110,15 @@ fn main() {
         build.define("USE_ENDO", None);
     }
 
-    if env::var("SERIAL_PUSH")
-        .map(|v| v == "TRUE")
-        .unwrap_or(false)
-    {
+    if env::var("SERIAL_PUSH").map(|v| v == "TRUE").unwrap_or(false) {
         build.define("PUSH_SET", None);
+    }
+
+    // Don't apply extended settings if explicitly disabled
+    if env::var("EXTENDED_SET").map(|v| v == "FALSE").unwrap_or(false) {
+        build.flag_if_supported("")
+            .flag_if_supported("")
+            .flag_if_supported("");
     }
 
     // Add source files
